@@ -163,7 +163,7 @@ def do_update():
     # MOD: replace current script; do not assume script is located at /usr/bin/rpi-source; also keep ownership and permissions
     script_name = argv[0]
     info("Updating rpi-source")
-    sh("sudo wget %s https://raw.githubusercontent.com/notro/rpi-source/master/rpi-source -O %s" % ("-q" if args.quiet else "", script_name))
+    sh("wget %s https://raw.githubusercontent.com/notro/rpi-source/master/rpi-source -O %s" % ("-q" if args.quiet else "", script_name))
     update_tag()
     info("Restarting rpi-source")
     argv.insert(0, sys.executable)
@@ -204,7 +204,7 @@ def check_gcc():
 
 def proc_config_gz():
     if not os.path.exists('/proc/config.gz'):
-        sh("sudo modprobe configs 2> /dev/null")
+        sh("modprobe configs 2> /dev/null")
 
     if not os.path.exists('/proc/config.gz'):
         return ''
@@ -317,7 +317,7 @@ def get_processor_type():
 
 def check_bc():
     if not os.path.exists('/usr/bin/bc'):
-        fail("bc is NOT installed. Needed by 'make modules_prepare'. On Raspbian, run 'sudo apt-get install bc' to install it.")
+        fail("bc is NOT installed. Needed by 'make modules_prepare'. On Raspbian, run 'apt-get install bc' to install it.")
 
 ##############################################################################
 
@@ -385,9 +385,9 @@ sh("rm -f %s" % linux_symlink)
 sh("ln -s %s %s" % (linux_dir, linux_symlink))
 
 info("Create /lib/modules/<ver>/{build,source} symlinks")
-sh("sudo rm -rf /lib/modules/$(uname -r)/build /lib/modules/$(uname -r)/source")
-sh("sudo ln -sf %s /lib/modules/$(uname -r)/build" % linux_symlink)
-sh("sudo ln -sf %s /lib/modules/$(uname -r)/source" % linux_symlink)
+sh("rm -rf /lib/modules/$(uname -r)/build /lib/modules/$(uname -r)/source")
+sh("ln -sf %s /lib/modules/$(uname -r)/build" % linux_symlink)
+sh("ln -sf %s /lib/modules/$(uname -r)/source" % linux_symlink)
 
 if args.default_config or not kernel.config:
     info(".config (generating default)")
@@ -412,7 +412,7 @@ if not args.nomake:
     sh("cd %s && make modules_prepare %s" % (linux_symlink, (" > /dev/null" if args.quiet else "")))
 
 if not os.path.exists('/usr/include/ncurses.h'):
-    info("ncurses-devel is NOT installed. Needed by 'make menuconfig'. On Raspbian sudo apt-get install libncurses5-dev")
+    info("ncurses-devel is NOT installed. Needed by 'make menuconfig'. On Raspbian apt-get install libncurses5-dev")
 
 if args.delete:
     info("Delete downloaded archive")
